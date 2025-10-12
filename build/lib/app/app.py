@@ -551,65 +551,65 @@ with st.expander("💰 Autres coûts (Taxe, Assurance, Soins, Infrastructure)"):
     
     st.info("💡 Les valeurs de taxe et assurance sont chargées automatiquement selon la classe de véhicule sélectionnée")
 
-# with st.expander("🔧 Données techniques et exports", expanded=False):
-#    st.subheader("📊 Analyse par poste de dépense")
-#    selected_posts = st.multiselect(
-#        "Sélectionner les postes à afficher",
-#       options=["Énergie", "Maintenance", "Pneus", "Autres"],
-#        default=["Énergie", "Maintenance"]
-#    )
-#    cumulative_view = st.checkbox("Vue cumulée", value=False)
-#
-#    expenses_df = make_expenses_by_category_df(results)
-#    if selected_posts:
-#        fig_expenses = fig_line_expenses_by_category(expenses_df, selected_posts, cumulative_view)
-#        st.altair_chart(fig_expenses, use_container_width=True)
-#    else:
-#        st.info("Sélectionnez au moins un poste pour afficher le graphique")
-#
-#    for tech in TECH_ORDER:
-#        ok, abs_npv, capex_net, opex_disc = check_decomposition(results[tech], global_params, tol=0.01)
-#        label = TECH_LABELS.get(tech.name, tech.value)
-#        msg = f"{label}: |NPV|={abs_npv:,.0f} vs CAPEX_net={capex_net:,.0f} + OPEX={opex_disc:,.0f}"
-#       (st.success if ok else st.error)(("OK — " if ok else "Écart — ") + msg)
-#
-#    st.subheader("Export")
-#
-#    agg = df_decomp.pivot_table(index="Technologie", columns="Poste", values="CHF", aggfunc="sum").reset_index()
-#
-#    POSTS = ["Acquisition (achat – VR act.)", "Énergie", "Maintenance", "Pneus", "Autres"]
-#    for p in POSTS:
-#        if p not in agg.columns:
-#            agg[p] = 0.0
-#    agg["Total (somme postes)"] = agg[POSTS].sum(axis=1)
-#
-#    st.dataframe(agg, use_container_width=True)
-#
-#    def _to_csv(df: pd.DataFrame) -> bytes:
-#        return df.to_csv(index=False).encode("utf-8")
-#
-#    col_a, col_b, col_c, col_d = st.columns(4)
-#    with col_a:
-#        st.download_button("⬇️ Décomp. (CSV)", data=_to_csv(df_decomp), file_name="decomposition.csv", mime="text/csv")
-#    with col_b:
-#        st.download_button("⬇️ Agrégé (CSV)", data=_to_csv(agg), file_name="aggregat.csv", mime="text/csv")
-#    with col_c:
-#        st.download_button("⬇️ BEV annuel (CSV)", data=_to_csv(results[Tech.BEV].annual_table), file_name="bev_annuel.csv", mime="text/csv")
-#    with col_d:
-#        st.download_button("⬇️ ICE annuel (CSV)", data=_to_csv(results[Tech.ICE].annual_table), file_name="ice_annuel.csv", mime="text/csv")
-#
-#st.markdown("## Résultats (NPV et TCO/km)")
-#recap = []
-#for tech in TECH_ORDER:
-#    r = results[tech]
-#    label = TECH_LABELS.get(tech.name, tech.value)
-#    recap.append({
-#        "Technologie": label,
-#        "Classe": r.vehicle_class,
-#        "NPV total (CHF)": f"{r.npv_total:,.0f}",
-#        "TCO (CHF/km)": f"{r.tco_per_km:.2f}",
-#    })
-#st.dataframe(pd.DataFrame(recap), use_container_width=True)
-#
-#with st.expander("Voir la table annuelle détaillée (BEV)"):
-#    st.dataframe(results[Tech.BEV].annual_table, use_container_width=True)
+with st.expander("🔧 Données techniques et exports", expanded=False):
+    st.subheader("📊 Analyse par poste de dépense")
+    selected_posts = st.multiselect(
+        "Sélectionner les postes à afficher",
+        options=["Énergie", "Maintenance", "Pneus", "Autres"],
+        default=["Énergie", "Maintenance"]
+    )
+    cumulative_view = st.checkbox("Vue cumulée", value=False)
+
+    expenses_df = make_expenses_by_category_df(results)
+    if selected_posts:
+        fig_expenses = fig_line_expenses_by_category(expenses_df, selected_posts, cumulative_view)
+        st.altair_chart(fig_expenses, use_container_width=True)
+    else:
+        st.info("Sélectionnez au moins un poste pour afficher le graphique")
+
+    for tech in TECH_ORDER:
+        ok, abs_npv, capex_net, opex_disc = check_decomposition(results[tech], global_params, tol=0.01)
+        label = TECH_LABELS.get(tech.name, tech.value)
+        msg = f"{label}: |NPV|={abs_npv:,.0f} vs CAPEX_net={capex_net:,.0f} + OPEX={opex_disc:,.0f}"
+        (st.success if ok else st.error)(("OK — " if ok else "Écart — ") + msg)
+
+    st.subheader("Export")
+
+    agg = df_decomp.pivot_table(index="Technologie", columns="Poste", values="CHF", aggfunc="sum").reset_index()
+
+    POSTS = ["Acquisition (achat – VR act.)", "Énergie", "Maintenance", "Pneus", "Autres"]
+    for p in POSTS:
+        if p not in agg.columns:
+            agg[p] = 0.0
+    agg["Total (somme postes)"] = agg[POSTS].sum(axis=1)
+
+    st.dataframe(agg, use_container_width=True)
+
+    def _to_csv(df: pd.DataFrame) -> bytes:
+        return df.to_csv(index=False).encode("utf-8")
+
+    col_a, col_b, col_c, col_d = st.columns(4)
+    with col_a:
+        st.download_button("⬇️ Décomp. (CSV)", data=_to_csv(df_decomp), file_name="decomposition.csv", mime="text/csv")
+    with col_b:
+        st.download_button("⬇️ Agrégé (CSV)", data=_to_csv(agg), file_name="aggregat.csv", mime="text/csv")
+    with col_c:
+        st.download_button("⬇️ BEV annuel (CSV)", data=_to_csv(results[Tech.BEV].annual_table), file_name="bev_annuel.csv", mime="text/csv")
+    with col_d:
+        st.download_button("⬇️ ICE annuel (CSV)", data=_to_csv(results[Tech.ICE].annual_table), file_name="ice_annuel.csv", mime="text/csv")
+
+st.markdown("## Résultats (NPV et TCO/km)")
+recap = []
+for tech in TECH_ORDER:
+    r = results[tech]
+    label = TECH_LABELS.get(tech.name, tech.value)
+    recap.append({
+        "Technologie": label,
+        "Classe": r.vehicle_class,
+        "NPV total (CHF)": f"{r.npv_total:,.0f}",
+        "TCO (CHF/km)": f"{r.tco_per_km:.2f}",
+    })
+st.dataframe(pd.DataFrame(recap), use_container_width=True)
+
+with st.expander("Voir la table annuelle détaillée (BEV)"):
+    st.dataframe(results[Tech.BEV].annual_table, use_container_width=True)
