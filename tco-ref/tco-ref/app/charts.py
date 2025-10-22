@@ -222,7 +222,7 @@ def fig_line_cumulative(cum_df: pd.DataFrame):
             cum_df_clean["Cumul_formatted"] = cum_df_clean["Cumul NPV positif"].apply(lambda x: format_chf_swiss(x))
             color_scale = alt.Scale(
                 domain=TECH_ORDER_LABELS,
-                range=["#4371c4", "#686868", "#ffc88a"]
+                range=["#4371c4", "#686868", "#fd7979"]
             )
             y_max = cum_df_clean["Cumul NPV positif"].max() * 1.1
             line = alt.Chart(cum_df_clean).mark_line(point=True, strokeWidth=3).encode(
@@ -236,7 +236,20 @@ def fig_line_cumulative(cum_df: pd.DataFrame):
                     ), 
                     scale=alt.Scale(domain=[0, y_max])
                 ),
-                color=alt.Color("Technologie:N", scale=color_scale, legend=alt.Legend(orient="bottom", title=None, values=TECH_ORDER_LABELS)),
+                color=alt.Color(
+                    "Technologie:N",
+                     scale=color_scale, 
+                     legend=alt.Legend(
+                         orient="right", 
+                         direction="horizontal",
+                         columns=1,
+                         symbolType="square",
+                         symbolSize=80,
+                         title=None, 
+                         labelLimit=300,
+                         values=TECH_ORDER_LABELS
+                    )
+                ),
                 tooltip=[
                     alt.Tooltip("Année:Q", title="Année", format="d"),
                     alt.Tooltip("Technologie:N", title="Technologie"),
