@@ -258,6 +258,7 @@ st.altair_chart(fig_bar, use_container_width=True)
 # Padding vertical supplémentaire sous le bar chart pour éviter le chevauchement
 st.markdown("<div style='height: 40px'></div>", unsafe_allow_html=True)
 
+st.markdown('<span style="font-size:20px; font-weight:600;">Evolution des coûts sur la durée de possession</span>', unsafe_allow_html=True)
 cum_df = make_cum_df(results)
 fig_line = fig_line_cumulative(cum_df)
 st.altair_chart(fig_line, use_container_width=True)

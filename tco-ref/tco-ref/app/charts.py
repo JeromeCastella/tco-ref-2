@@ -258,11 +258,7 @@ def fig_line_cumulative(cum_df: pd.DataFrame):
             ).properties(
                 width=600,
                 height=400,
-                title={
-                    "text": "Evolution des coûts sur la durée de possession",
-                    "fontSize": 20,
-                    "anchor": "start"
-                }
+                
             )
     chart = line.configure_view(
         strokeWidth=0
