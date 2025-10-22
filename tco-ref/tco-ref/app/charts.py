@@ -72,11 +72,11 @@ def make_decomposition_df_by_post(results: Dict[Tech, Results], params: GlobalPa
 
         label = TECH_LABELS.get(tech.value, tech.value)
         rows += [
-            {"Technologie": label, "Poste": "Acquisition (achat – VR act.)", "CHF": capex_net},
-            {"Technologie": label, "Poste": "Énergie",                        "CHF": e_disc},
-            {"Technologie": label, "Poste": "Maintenance",                    "CHF": m_disc},
-            {"Technologie": label, "Poste": "Pneus",                          "CHF": t_disc},
-            {"Technologie": label, "Poste": "Autres",                         "CHF": o_disc},
+            {"Technologie": label, "Poste": "Achats - Revente", "CHF": capex_net},
+            {"Technologie": label, "Poste": "Énergie",         "CHF": e_disc},
+            {"Technologie": label, "Poste": "Maintenance",     "CHF": m_disc},
+            {"Technologie": label, "Poste": "Pneus",           "CHF": t_disc},
+            {"Technologie": label, "Poste": "Autres",        "CHF": o_disc},
         ]
 
     return pd.DataFrame(rows)
@@ -89,7 +89,8 @@ def fig_bar_decomposition_by_post(df_decomp: pd.DataFrame):
     """
 
     df_decomp = df_decomp.copy()
-    df_decomp["CHF_formatted"] = df_decomp["CHF"].apply(lambda x: format_chf_swiss(x))
+    # Format texte pour affichage (avec suffixe CHF pour les tooltips/labels)
+    df_decomp["CHF_formatted"] = df_decomp["CHF"].apply(lambda x: f"{format_chf_swiss(x)} CHF")
 
     # Forcer explicitement le type catégoriel pour garantir l'ordre
     df_decomp["Technologie"] = pd.Categorical(df_decomp["Technologie"], categories=TECH_ORDER_LABELS, ordered=True)
@@ -97,7 +98,7 @@ def fig_bar_decomposition_by_post(df_decomp: pd.DataFrame):
     # S'assurer que toutes les catégories sont présentes (même vides)
     for tech in TECH_ORDER_LABELS:
         if tech not in df_decomp["Technologie"].values:
-            for poste in ["Acquisition (achat – VR act.)", "Énergie", "Maintenance", "Pneus", "Autres"]:
+            for poste in ["Achats - Revente", "Énergie", "Maintenance", "Pneus", "Autres"]:
                 df_decomp = pd.concat([
                     df_decomp,
                     pd.DataFrame([{"Technologie": tech, "Poste": poste, "CHF": 0.0, "CHF_formatted": "0"}])
@@ -110,7 +111,7 @@ def fig_bar_decomposition_by_post(df_decomp: pd.DataFrame):
             "Pneus",
             "Maintenance",
             "Énergie",
-            "Acquisition (achat – VR act.)"
+            "Achats - Revente"
         ],
         range=["#fd7979", "#ffa77f", "#ffcc8f", "#b3cbff", "#4371c4"]
     )
@@ -129,7 +130,17 @@ def fig_bar_decomposition_by_post(df_decomp: pd.DataFrame):
             ), 
             scale=alt.Scale(domain=[0, totals["CHF"].max() * 1.15])
         ),
-        color=alt.Color("Poste:N", scale=color_scale, legend=alt.Legend(orient="top", title=None, labelLimit=300)),
+        color=alt.Color(
+            "Poste:N",
+             scale=color_scale,
+             legend=alt.Legend(
+                 orient="top",
+                 direction="horizontal",
+                 columns=2,
+                 title=None, 
+                 labelLimit=300
+            )
+        ),
         tooltip=[
             alt.Tooltip("Technologie:N", title="Technologie"),
             alt.Tooltip("Poste:N", title="Poste"),
@@ -151,7 +162,8 @@ def fig_bar_decomposition_by_post(df_decomp: pd.DataFrame):
         dy=-10,
         fontSize=14,
         fontWeight=500,
-
+        # Pas de tooltip pour le label de montant
+        tooltip=None,
     ).encode(
         x=alt.X("Technologie:N", sort=TECH_ORDER_LABELS),
         y=alt.Y("CHF:Q"),
