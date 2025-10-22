@@ -18,9 +18,9 @@ from tco_core.tco import compute_all_techs
 from tco_core.defaults import get_default
 
 TECH_LABELS = {
-    'BEV': 'VE',
-    'ICE': 'VT',
-    'PHEV': 'VHR',
+    'BEV': 'Electrique',
+    'ICE': 'Thermique',
+    'PHEV': 'Hybride Plug-in',
 }
 
 # Ordre d'affichage des technologies (BEV, ICE, PHEV)
@@ -182,7 +182,8 @@ with col1:
             "moyenne": "Classe moyenne",
             "superieure": "Classe supérieure",
             "suv": "SUV"
-        }[x]
+        }[x],
+        key="vehicle_class_selectbox"
     )
 
 with col2:
